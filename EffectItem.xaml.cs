@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using GFX_04_ImageManipulation.Effects;
 
 using static GFX_04_ImageManipulation.Prelude;
 namespace GFX_04_ImageManipulation;
@@ -116,6 +117,11 @@ public class Effect
         { "Filter_HighPass1",  (Type.Switch, (bmp, width, _) => Filter_Mask(bmp, width, Mask_HighPass1)) },
         { "Filter_HighPass2",  (Type.Switch, (bmp, width, _) => Filter_Mask(bmp, width, Mask_HighPass2)) },
         { "Filter_HighPass3",  (Type.Switch, (bmp, width, _) => Filter_Mask(bmp, width, Mask_HighPass3)) },
+
+        { "Filter_GaussBlur3",  (Type.Percent, (bmp, width, value) => GaussianBlurEffect.Apply(bmp, width, GaussianBlurEffect.GenerateMatrix(3, value))) },
+        { "Filter_GaussBlur5",  (Type.Percent, (bmp, width, value) => GaussianBlurEffect.Apply(bmp, width, GaussianBlurEffect.GenerateMatrix(5, value))) },
+        { "Filter_GaussBlur7",  (Type.Percent, (bmp, width, value) => GaussianBlurEffect.Apply(bmp, width, GaussianBlurEffect.GenerateMatrix(7, value))) },
+        { "Filter_GaussBlur9",  (Type.Percent, (bmp, width, value) => GaussianBlurEffect.Apply(bmp, width, GaussianBlurEffect.GenerateMatrix(9, value))) },
     };
 
     #region >>> Point Transforms <<<
