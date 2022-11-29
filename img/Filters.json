@@ -1,0 +1,6 @@
+[
+  { "Name": "Filter_Avg", "IsActive": false, "Value": 1 },
+  { "Name": "Filter_Avg2", "IsActive": false, "Value": 1 },
+  { "Name": "Filter_Median", "IsActive": false, "Value": 1 },
+  { "Name": "Filter_Median", "IsActive": false, "Value": 1 },
+]

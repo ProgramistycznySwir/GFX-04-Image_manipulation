@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "Gray_R",
+    "IsActive": false,
+    "Value": 1
+  },
+  {
+    "Name": "Gray_G",
+    "IsActive": false,
+    "Value": 1
+  },
+  {
+    "Name": "Gray_B",
+    "IsActive": false,
+    "Value": 1
+  }
+]

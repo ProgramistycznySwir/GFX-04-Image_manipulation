@@ -1,0 +1,32 @@
+[
+  {
+    "Name": "Add_R",
+    "IsActive": false,
+    "Value": 1
+  },
+  {
+    "Name": "Add_G",
+    "IsActive": false,
+    "Value": 1
+  },
+  {
+    "Name": "Add_B",
+    "IsActive": false,
+    "Value": 1
+  },
+  {
+    "Name": "Sub_R",
+    "IsActive": false,
+    "Value": 1
+  },
+  {
+    "Name": "Sub_G",
+    "IsActive": false,
+    "Value": 1
+  },
+  {
+    "Name": "Sub_B",
+    "IsActive": false,
+    "Value": 1
+  }
+]
