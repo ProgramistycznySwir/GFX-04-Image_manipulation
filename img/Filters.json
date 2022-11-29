@@ -5,4 +5,7 @@
   { "Name": "Filter_Median", "IsActive": false, "Value": 1 },
   { "Name": "Filter_Sobel", "IsActive": false, "Value": 1 },
   { "Name": "Filter_Sobel_Grayscale", "IsActive": false, "Value": 1 },
+  { "Name": "Filter_HighPass1", "IsActive": false, "Value": 1 },
+  { "Name": "Filter_HighPass2", "IsActive": false, "Value": 1 },
+  { "Name": "Filter_HighPass3", "IsActive": false, "Value": 1 },
 ]

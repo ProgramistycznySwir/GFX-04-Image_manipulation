@@ -112,6 +112,10 @@ public class Effect
         { "Filter_Median", (Type.Switch, (bmp, width, _) => Filter_Median(bmp, width, Mask_Avg)) },
         { "Filter_Sobel", (Type.Switch, (bmp, width, _) => Filter_Sobel(bmp, width, Mask_Sobel_X, Mask_Sobel_Y)) },
         { "Filter_Sobel_Grayscale", (Type.Switch, (bmp, width, _) => Filter_Sobel(bmp, width, Mask_Sobel_X, Mask_Sobel_Y, true)) },
+
+        { "Filter_HighPass1",  (Type.Switch, (bmp, width, _) => Filter_Mask(bmp, width, Mask_HighPass1)) },
+        { "Filter_HighPass2",  (Type.Switch, (bmp, width, _) => Filter_Mask(bmp, width, Mask_HighPass2)) },
+        { "Filter_HighPass3",  (Type.Switch, (bmp, width, _) => Filter_Mask(bmp, width, Mask_HighPass3)) },
     };
 
     #region >>> Point Transforms <<<
@@ -307,5 +311,23 @@ public class Effect
 
         result.CopyTo(bmp);
     }
+
+
+
+    public static readonly (int X, int Y, int Ratio)[] Mask_HighPass1 = {
+            (-1, -1, -1), ( 0, -1, -1), ( 1,  -1, -1),
+            (-1,  0, -1), ( 0,  0,  9), ( 1,   0, -1),
+            (-1,  1, -1), ( 0,  1, -1), ( 1,   1, -1),
+        };
+    public static readonly (int X, int Y, int Ratio)[] Mask_HighPass2 = {
+            (-1, -1,  1), ( 0, -1, -2), ( 1,  -1,  1),
+            (-1,  0, -2), ( 0,  0,  5), ( 1,   0, -2),
+            (-1,  1,  1), ( 0,  1, -2), ( 1,   1,  1),
+        };
+    public static readonly (int X, int Y, int Ratio)[] Mask_HighPass3 = {
+            (-1, -1,  0), ( 0, -1, -1), ( 1,  -1,  0),
+            (-1,  0, -1), ( 0,  0,  5), ( 1,   0, -1),
+            (-1,  1,  0), ( 0,  1, -1), ( 1,   1,  0),
+        };
 
 }
