@@ -103,13 +103,15 @@ public class Effect
         { "Gray_RG",  (Type.Switch, (bmp, _, _) => Gray_Cha(bmp, Cha.RG)) },
         { "Gray_RB",  (Type.Switch, (bmp, _, _) => Gray_Cha(bmp, Cha.RB)) },
         { "Gray_GB",  (Type.Switch, (bmp, _, _) => Gray_Cha(bmp, Cha.GB)) },
-        { "Gray_RGB", (Type.Switch, (bmp, _, _) => Gray_Cha(bmp, Cha.RGB)) },
+        { "Gray_RGB", (Type.Switch, (bmp, _, _) => GrayScale(bmp)) },
 
 
         { "Filter_Avg",  (Type.Switch, (bmp, width, _) => Filter_Mask(bmp, width, Mask_Avg)) },
         { "Filter_Avg2", (Type.Switch, (bmp, width, _) => Filter_Mask(bmp, width, Mask_Avg2)) },
 
         { "Filter_Median", (Type.Switch, (bmp, width, _) => Filter_Median(bmp, width, Mask_Avg)) },
+        { "Filter_Sobel", (Type.Switch, (bmp, width, _) => Filter_Sobel(bmp, width, Mask_Sobel_X, Mask_Sobel_Y)) },
+        { "Filter_Sobel_Grayscale", (Type.Switch, (bmp, width, _) => Filter_Sobel(bmp, width, Mask_Sobel_X, Mask_Sobel_Y, true)) },
     };
 
     #region >>> Point Transforms <<<
@@ -237,32 +239,70 @@ public class Effect
     }
 
 
-    public static void Filter_Median(Span<byte> bmp, int width, (int X, int Y, int)[] selector)
+    public static readonly (int X, int Y, int Ratio)[] Mask_Sobel_X = {
+            (-1, -1, -1), ( 0, -1, -2), ( 1,  -1, -1),
+            (-1,  0,  0), ( 0,  0,  0), ( 1,   0,  0),
+            (-1,  1,  1), ( 0,  1,  2), ( 1,   1,  1),
+        };
+    public static readonly (int X, int Y, int Ratio)[] Mask_Sobel_Y = {
+            (-1, -1, -1), ( 0, -1,  0), ( 1,  -1,  1),
+            (-1,  0, -2), ( 0,  0,  0), ( 1,   0,  2),
+            (-1,  1, -1), ( 0,  1,  0), ( 1,   1,  1),
+        };
+
+    public static void GrayScale(Span<byte> bmp)
     {
+        for (int i = 0; i < bmp.Length; i += 3)
+        {
+            byte gray = (byte)(bmp[i] * .21f + bmp[i + 1] * .71f + bmp[i + 2] * .071f);
+            bmp[i] = bmp[i + 1] = bmp[i + 2] = gray;
+        }
+    }
+
+    public static void Filter_Sobel(Span<byte> bmp, int width,
+            (int X, int Y, int Ratio)[] maskX, (int X, int Y, int Ratio)[] maskY,
+            bool grayscale = false)
+    {
+        if (grayscale)
+            GrayScale(bmp);
+
         Span<byte> result = new byte[bmp.Length];
         bmp.CopyTo(result);
 
         int height = (bmp.Length / 3) / width;
         Func<int, int, int> xy = (x, y) => (x + y * width) * 3;
-        Span<byte> buffer = stackalloc byte[selector.Length];
         // Loop over all pixels:
         for (int x = 0; x < width; x++)
             for (int y = 0; y < height; y++)
                 // Loop over channels:
                 for (int cha = 0; cha < 3; cha++)
                 {
-                    int buffer_idx = 0;
+                    float valueX = 0;
                     // Loop over mask pixels:
-                    for (int i = 0; i < selector.Length; i++)
+                    for (int i = 0; i < maskX.Length; i++)
                     {
-                        var (maskX, maskY) = (x + selector[i].X, y + selector[i].Y);
-                        if (maskX < 0 || maskX >= width || maskY < 0 || maskY >= height)
+                        var (maskX_x, maskX_y) = (x + maskX[i].X, y + maskX[i].Y);
+                        // Check if position is in image boundaries.
+                        if (maskX_x < 0 || maskX_x >= width || maskX_y < 0 || maskX_y >= height)
                             continue;
 
-                        buffer[buffer_idx++] = bmp[xy(maskX, maskY) + cha];
+                        valueX += bmp[xy(maskX_x, maskX_y) + cha] * maskX[i].Ratio;
                     }
 
-                    result[xy(x, y) + cha] = Median(buffer.Slice(0, buffer_idx));
+                    float valueY = 0;
+                    // Loop over mask pixels:
+                    for (int i = 0; i < maskY.Length; i++)
+                    {
+                        var (maskY_x, maskY_y) = (x + maskY[i].X, y + maskY[i].Y);
+                        // Check if position is in image boundaries.
+                        if (maskY_x < 0 || maskY_x >= width || maskY_y < 0 || maskY_y >= height)
+                            continue;
+
+                        valueY += bmp[xy(maskY_x, maskY_y) + cha] * maskY[i].Ratio;
+                    }
+
+                    float value_ = MathF.Sqrt((valueX * valueX) + (valueY * valueY));
+                    result[xy(x, y) + cha] = clampByte((int)value_);
                 }
 
         result.CopyTo(bmp);

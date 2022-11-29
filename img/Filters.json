@@ -3,4 +3,6 @@
   { "Name": "Filter_Avg2", "IsActive": false, "Value": 1 },
   { "Name": "Filter_Median", "IsActive": false, "Value": 1 },
   { "Name": "Filter_Median", "IsActive": false, "Value": 1 },
+  { "Name": "Filter_Sobel", "IsActive": false, "Value": 1 },
+  { "Name": "Filter_Sobel_Grayscale", "IsActive": false, "Value": 1 },
 ]
